@@ -1,0 +1,71 @@
+.container {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.line {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #e5e5e5;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+.posts {
+  position: relative;
+  z-index: 1;
+}
+
+.postWrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* 
+  Ideally for desktop, we might want staggered layout (left/right). 
+  But for simple vertical scrolling list on mobile (mobile first!), 
+  a single column with a line running through or on the side is safer.
+  
+  Let's keep it single column centered for now as per "long timeline from up to down".
+*/
+
+.dot {
+  position: absolute;
+  left: 50%;
+  top: 2rem;
+  width: 12px;
+  height: 12px;
+  background-color: #333;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  border: 2px solid #fff;
+}
+
+.dotLeft {
+  background-color: #333; /* Customize per user if needed */
+}
+
+.dotRight {
+  background-color: #666; /* Customize per user if needed */
+}
+
+@media (max-width: 768px) {
+  .line {
+    left: 20px;
+  }
+  
+  .dot {
+    left: 20px;
+  }
+  
+  .posts {
+    padding-left: 40px; /* Make space for line */
+  }
+}

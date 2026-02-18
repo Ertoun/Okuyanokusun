@@ -1,0 +1,78 @@
+.main {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #171717;
+  font-family: var(--font-playfair); /* Using Playfair for title */
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.userSelect {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #e5e5e5;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.composeBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #171717;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.composeBtn:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.5rem;
+  color: #666;
+}
