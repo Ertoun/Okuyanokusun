@@ -42,6 +42,9 @@ export default function PostCard({ post, currentUser, onRespond, onDelete }: Pos
         backgroundColor: post.style.backgroundColor,
         color: post.style.textColor,
         fontFamily: post.style.fontFamily,
+        backgroundImage: post.style.backgroundImage ? `url(${post.style.backgroundImage})` : 'none',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
       }}
     >
       <header className={styles.header}>
@@ -60,7 +63,15 @@ export default function PostCard({ post, currentUser, onRespond, onDelete }: Pos
         </div>
       </header>
       
-      <div className={styles.content}>
+      <div 
+        className={styles.content}
+        style={{ 
+          backgroundColor: post.style.backgroundImage ? 'rgba(255,255,255,0.7)' : 'transparent',
+          padding: post.style.backgroundImage ? '1rem' : '0',
+          borderRadius: post.style.backgroundImage ? '8px' : '0',
+          color: post.style.backgroundImage ? '#000' : 'inherit'
+        }}
+      >
         <p>{post.content}</p>
       </div>
 

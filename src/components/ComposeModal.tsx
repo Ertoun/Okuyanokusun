@@ -18,6 +18,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
   const [bgColor, setBgColor] = useState(currentUser === 'UserA' ? '#ffffff' : '#f0f0f0');
   const [textColor, setTextColor] = useState('#000000');
   const [fontFamily, setFontFamily] = useState('var(--font-inter)');
+  const [bgImage, setBgImage] = useState("");
 
   if (!isOpen) return null;
 
@@ -31,22 +32,33 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
         backgroundColor: bgColor,
         textColor: textColor,
         fontFamily: fontFamily,
+        backgroundImage: bgImage || undefined,
       },
     };
     onSubmit(newPost);
     setContent("");
     setMediaUrl("");
     setMediaType(null);
-    // Reset to defaults or keep last used? Resetting for now.
     setBgColor(currentUser === 'UserA' ? '#ffffff' : '#f0f0f0');
     setTextColor('#000000');
     setFontFamily('var(--font-inter)');
+    setBgImage("");
     onClose();
   };
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.modal} style={{ backgroundColor: bgColor, color: textColor, fontFamily }}>
+      <div 
+        className={styles.modal} 
+        style={{ 
+          backgroundColor: bgColor, 
+          color: textColor, 
+          fontFamily,
+          backgroundImage: bgImage ? `url(${bgImage})` : 'none',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
         <div className={styles.header}>
           <h2>New Entry as {currentUser}</h2>
           <button onClick={onClose} className={styles.closeBtn} style={{ color: textColor }}><X size={24} /></button>
@@ -60,7 +72,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
             placeholder="What's on your mind?"
             rows={5}
             required
-            style={{ backgroundColor: 'transparent', color: 'inherit', fontFamily: 'inherit', border: `1px solid ${textColor}40` }}
+            style={{ backgroundColor: bgImage || bgColor !== '#ffffff' ? 'rgba(255,255,255,0.7)' : 'transparent', color: 'inherit', fontFamily: 'inherit', border: `1px solid ${textColor}40` }}
           />
           
           <div className={styles.mediaInput}>
@@ -70,7 +82,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
               value={mediaUrl}
               onChange={(e) => setMediaUrl(e.target.value)}
               className={styles.input}
-              style={{ backgroundColor: 'transparent', color: 'inherit', borderColor: `${textColor}40` }}
+              style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: 'inherit', borderColor: `${textColor}40` }}
             />
             <div className={styles.mediaTypeSelect}>
                <button type="button" onClick={() => setMediaType('image')} className={mediaType === 'image' ? styles.active : ''} style={{color: mediaType === 'image' ? '#fff' : textColor, borderColor: textColor}}><ImageIcon size={18}/></button>
@@ -78,14 +90,6 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
                <button type="button" onClick={() => setMediaType('audio')} className={mediaType === 'audio' ? styles.active : ''} style={{color: mediaType === 'audio' ? '#fff' : textColor, borderColor: textColor}}><Mic size={18}/></button>
             </div>
           </div>
-
-          {mediaUrl && mediaType && (
-            <div className={styles.mediaPreview}>
-              {mediaType === 'image' && <img src={mediaUrl} alt="Preview" className={styles.previewImage} />}
-              {mediaType === 'video' && <video src={mediaUrl} controls className={styles.previewVideo} />}
-              {mediaType === 'audio' && <audio src={mediaUrl} controls className={styles.previewAudio} />}
-            </div>
-          )}
 
           <div className={styles.customizationControls}>
             <div className={styles.controlGroup}>
@@ -101,7 +105,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
               <select 
                 value={fontFamily} 
                 onChange={(e) => setFontFamily(e.target.value)}
-                style={{ backgroundColor: 'transparent', color: 'inherit', borderColor: `${textColor}40` }}
+                style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: 'inherit', borderColor: `${textColor}40` }}
               >
                 <option value="var(--font-inter)">Inter</option>
                 <option value="var(--font-playfair)">Playfair</option>
@@ -109,6 +113,26 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
               </select>
             </div>
           </div>
+
+          <div className={styles.controlGroup} style={{ width: '100%', marginTop: '0.5rem' }}>
+            <label style={{ marginRight: '0.5rem' }}>Bg Image URL</label>
+            <input 
+              type="text" 
+              placeholder="Paste image URL for post background" 
+              value={bgImage}
+              onChange={(e) => setBgImage(e.target.value)}
+              className={styles.input}
+              style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: 'inherit', borderColor: `${textColor}40` }}
+            />
+          </div>
+
+          {mediaUrl && mediaType && (
+            <div className={styles.mediaPreview}>
+              {mediaType === 'image' && <img src={mediaUrl} alt="Preview" className={styles.previewImage} />}
+              {mediaType === 'video' && <video src={mediaUrl} controls className={styles.previewVideo} />}
+              {mediaType === 'audio' && <audio src={mediaUrl} controls className={styles.previewAudio} />}
+            </div>
+          )}
 
           <div className={styles.actions}>
             <button type="submit" className={styles.submitBtn}>Post</button>

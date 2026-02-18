@@ -8,6 +8,7 @@ export interface IPost extends Document {
     backgroundColor: string;
     textColor: string;
     fontFamily: string;
+    backgroundImage?: string;
   };
   responses: {
     author: 'UserA' | 'UserB';
@@ -38,6 +39,7 @@ const PostSchema: Schema = new Schema({
     backgroundColor: { type: String, default: '#ffffff' },
     textColor: { type: String, default: '#000000' },
     fontFamily: { type: String, default: 'Inter' },
+    backgroundImage: { type: String },
   },
   responses: [ResponseSchema],
   createdAt: { type: Date, default: Date.now },

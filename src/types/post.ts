@@ -4,6 +4,7 @@ export interface PostStyle {
   backgroundColor: string;
   textColor: string;
   fontFamily: string;
+  backgroundImage?: string;
 }
 
 export interface PostMedia {
