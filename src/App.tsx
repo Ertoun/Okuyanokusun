@@ -138,7 +138,9 @@ export default function App() {
     <main className={styles.main}>
       <header className={styles.header}>
         <div className={styles.headerLeft}>
-          <h1 className={styles.title}>Okuyan okusun</h1>
+          <h1 className={styles.title} onClick={() => window.location.href = '/'}>
+            Okuyan okusun
+          </h1>
           <Clock />
         </div>
         <div className={styles.controls}>

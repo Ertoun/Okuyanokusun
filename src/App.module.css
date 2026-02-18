@@ -26,6 +26,12 @@
   color: var(--foreground);
   font-family: var(--font-playfair);
   line-height: 1;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.title:hover {
+  opacity: 0.8;
 }
 
 .controls {
