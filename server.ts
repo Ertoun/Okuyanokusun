@@ -3,6 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import dbConnect from './src/lib/db';
 import Post from './src/models/Post';
 
@@ -38,8 +39,8 @@ app.post('/api/posts', async (req, res) => {
 app.use(express.static('dist'));
 
 // Handle React routing, return all requests to React app
-app.get('/*', (_req, res) => {
-  res.sendFile('index.html', { root: 'dist' });
+app.get('(.*)', (_req, res) => {
+  res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
