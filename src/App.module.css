@@ -11,14 +11,14 @@
   align-items: center;
   margin-bottom: 3rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid var(--border);
 }
 
 .title {
   font-size: 2rem;
   font-weight: 700;
-  color: #171717;
-  font-family: var(--font-playfair); /* Using Playfair for title */
+  color: var(--foreground);
+  font-family: var(--font-playfair);
 }
 
 .controls {
@@ -30,8 +30,9 @@
 .userSelect {
   padding: 0.5rem;
   border-radius: 6px;
-  border: 1px solid #e5e5e5;
-  background: transparent;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
   font-family: inherit;
   font-size: 0.9rem;
   cursor: pointer;
@@ -41,8 +42,8 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #171717;
-  color: white;
+  background: var(--accent);
+  color: var(--accent-foreground);
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -74,5 +75,6 @@
   align-items: center;
   height: 100vh;
   font-size: 1.5rem;
-  color: #666;
+  color: var(--foreground);
+  opacity: 0.7;
 }

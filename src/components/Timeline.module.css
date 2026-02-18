@@ -11,7 +11,7 @@
   top: 0;
   bottom: 0;
   width: 2px;
-  background-color: #e5e5e5;
+  background-color: var(--border);
   transform: translateX(-50%);
   z-index: 0;
 }
@@ -28,32 +28,25 @@
   justify-content: center;
 }
 
-/* 
-  Ideally for desktop, we might want staggered layout (left/right). 
-  But for simple vertical scrolling list on mobile (mobile first!), 
-  a single column with a line running through or on the side is safer.
-  
-  Let's keep it single column centered for now as per "long timeline from up to down".
-*/
-
 .dot {
   position: absolute;
   left: 50%;
   top: 2rem;
   width: 12px;
   height: 12px;
-  background-color: #333;
+  background-color: var(--accent);
   border-radius: 50%;
   transform: translateX(-50%);
-  border: 2px solid #fff;
+  border: 2px solid var(--background);
+  box-shadow: 0 0 0 1px var(--border);
 }
 
 .dotLeft {
-  background-color: #333; /* Customize per user if needed */
+  opacity: 1;
 }
 
 .dotRight {
-  background-color: #666; /* Customize per user if needed */
+  opacity: 0.8;
 }
 
 @media (max-width: 768px) {
@@ -66,6 +59,6 @@
   }
   
   .posts {
-    padding-left: 40px; /* Make space for line */
+    padding-left: 40px;
   }
 }
