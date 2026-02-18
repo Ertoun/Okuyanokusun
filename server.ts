@@ -34,6 +34,14 @@ app.post('/api/posts', async (req, res) => {
   }
 });
 
+// Serve static files from the build directory
+app.use(express.static('dist'));
+
+// Handle React routing, return all requests to React app
+app.get('*', (_req, res) => {
+  res.sendFile('index.html', { root: 'dist' });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
