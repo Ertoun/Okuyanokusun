@@ -38,7 +38,7 @@ app.post('/api/posts', async (req, res) => {
 app.use(express.static('dist'));
 
 // Handle React routing, return all requests to React app
-app.get('*', (_req, res) => {
+app.get('/*', (_req, res) => {
   res.sendFile('index.html', { root: 'dist' });
 });
 
