@@ -156,9 +156,42 @@
 
 .responseHeader {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   margin-bottom: 0.5rem;
   font-size: 0.85rem;
+}
+
+.responseHeaderLeft {
+  display: flex;
+  gap: 1rem;
+}
+
+.responseHeaderActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+
+.commentActionBtn {
+  background: transparent;
+  border: none;
+  color: var(--foreground);
+  opacity: 0.4;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+.commentActionBtn:hover {
+  opacity: 1;
+}
+
+.inlineEditForm {
+  display: flex;
+  flex-direction: column;
 }
 
 .responseAuthor {

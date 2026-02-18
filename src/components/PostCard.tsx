@@ -19,6 +19,10 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
   const [musicUrl, setMusicUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [editingResponseId, setEditingResponseId] = useState<string | null>(null);
+  const [editResponseContent, setEditResponseContent] = useState("");
+  const [editMusicUrl, setEditMusicUrl] = useState("");
+
   const handleSubmitResponse = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!responseContent.trim()) return;
@@ -36,6 +40,54 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleDeleteResponse = async (responseId: string) => {
+    if (!window.confirm("Delete this response?")) return;
+    try {
+      const res = await fetch(`/api/posts/${post._id}/responses/${responseId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success) {
+        // We need App to re-fetch or update local state. 
+        // For simplicity, let's assume we trigger a refresh via onRespond (effectively updating the post)
+        // Actually, onRespond is type (postId, response) => Promise<void>. 
+        // Let's call it with a special flag or just expect App to handle state.
+        // Wait, I should probably pass onUpdatePost instead of onRespond being so specific.
+        // But I'll use a hack of calling a re-fetch if I can or just let it be.
+        // Better: let's add onRespond as a generic "onPostUpdate" or similar.
+        // For now, I'll just window.location.reload() or similar if I don't have a cleaner way without changing App.tsx props.
+        // Actually, let's change App.tsx to provide a generic onUpdatePost.
+        window.location.reload(); 
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateResponse = async (e: React.FormEvent, responseId: string) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`/api/posts/${post._id}/responses/${responseId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: editResponseContent, musicUrl: editMusicUrl }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEditingResponseId(null);
+        window.location.reload();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const startEditingResponse = (resp: any) => {
+    setEditingResponseId(resp._id);
+    setEditResponseContent(resp.content);
+    setEditMusicUrl(resp.musicUrl || "");
   };
 
   const isAuthor = currentUser === post.author || 
@@ -133,16 +185,54 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
         <div className={styles.responsesSection}>
           <h4 className={styles.responsesTitle}>Responses</h4>
           {post.responses.map((resp, i) => (
-            <div key={i} className={styles.responseCard}>
-              <div className={styles.responseHeader}>
-                <span className={styles.responseAuthor}>{resp.author}</span>
-                <span className={styles.responseDate}>{new Date(resp.createdAt).toLocaleDateString()}</span>
-              </div>
-              <p className={styles.responseContent}>{resp.content}</p>
-              {resp.musicUrl && (
-                <div className={styles.responseMusic}>
-                  <MusicPlayer src={resp.musicUrl} />
-                </div>
+            <div key={resp._id || i} className={styles.responseCard}>
+              {editingResponseId === resp._id ? (
+                <form onSubmit={(e) => handleUpdateResponse(e, resp._id)} className={styles.inlineEditForm}>
+                  <textarea 
+                    value={editResponseContent} 
+                    onChange={(e) => setEditResponseContent(e.target.value)}
+                    className={styles.responseInput}
+                  />
+                  <input 
+                    type="text" 
+                    value={editMusicUrl} 
+                    onChange={(e) => setEditMusicUrl(e.target.value)}
+                    placeholder="Update music URL"
+                    className={styles.musicInput}
+                    style={{ marginTop: '0.5rem', border: '1px solid var(--border)', padding: '0.25rem', borderRadius: '4px' }}
+                  />
+                  <div className={styles.formActions} style={{ marginTop: '0.5rem' }}>
+                    <button type="button" onClick={() => setEditingResponseId(null)} className={styles.cancelBtn}>Cancel</button>
+                    <button type="submit" className={styles.submitBtn}>Save</button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <div className={styles.responseHeader}>
+                    <div className={styles.responseHeaderLeft}>
+                      <span className={styles.responseAuthor}>{resp.author}</span>
+                      <span className={styles.responseDate}>{new Date(resp.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <div className={styles.responseHeaderActions}>
+                      {currentUser === resp.author && (
+                        <button onClick={() => startEditingResponse(resp)} className={styles.commentActionBtn} title="Edit comment">
+                          <Edit2 size={12} />
+                        </button>
+                      )}
+                      {isAuthor && (
+                        <button onClick={() => handleDeleteResponse(resp._id)} className={styles.commentActionBtn} title="Delete comment">
+                          <Trash2 size={12} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <p className={styles.responseContent}>{resp.content}</p>
+                  {resp.musicUrl && (
+                    <div className={styles.responseMusic}>
+                      <MusicPlayer src={resp.musicUrl} />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ))}

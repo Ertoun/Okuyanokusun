@@ -13,6 +13,7 @@ export interface PostMedia {
 }
 
 export interface PostResponse {
+  _id: string;
   author: UserType;
   content: string;
   musicUrl?: string;

@@ -52,6 +52,39 @@ app.post('/api/posts/:id/responses', async (req, res) => {
   }
 });
 
+app.put('/api/posts/:postId/responses/:responseId', async (req, res) => {
+  await dbConnect();
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).json({ success: false, error: 'Post not found' });
+    
+    const response = (post.responses as any).id(req.params.responseId);
+    if (!response) return res.status(404).json({ success: false, error: 'Response not found' });
+    
+    response.content = req.body.content;
+    if (req.body.musicUrl !== undefined) response.musicUrl = req.body.musicUrl;
+    
+    await post.save();
+    res.json({ success: true, data: post });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+app.delete('/api/posts/:postId/responses/:responseId', async (req, res) => {
+  await dbConnect();
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).json({ success: false, error: 'Post not found' });
+    
+    (post.responses as any).pull({ _id: req.params.responseId });
+    await post.save();
+    res.json({ success: true, data: post });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
 app.post('/api/posts/:id/reactions', async (req, res) => {
   await dbConnect();
   try {
