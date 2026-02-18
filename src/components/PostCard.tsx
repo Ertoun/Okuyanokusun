@@ -2,7 +2,7 @@ import MusicPlayer from "./MusicPlayer";
 import styles from "./PostCard.module.css";
 import { PostData, UserType } from "@/types/post";
 import { useState } from "react";
-import { MessageSquare, Music, Trash2, Edit2, Heart, Frown, Smile } from "lucide-react";
+import { MessageSquare, Music, Trash2, Edit2, Heart, Frown, Smile, Tag } from "lucide-react";
 
 interface PostCardProps {
   post: PostData;
@@ -96,7 +96,7 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
 
   return (
     <article
-      className={styles.card}
+      className={`${styles.card} ${styles.animateIn}`}
       style={{
         backgroundColor: post.style.backgroundColor,
         color: post.style.textColor,
@@ -130,6 +130,17 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
           )}
         </div>
       </header>
+
+      {post.tags && post.tags.length > 0 && (
+        <div className={styles.tagsDisplay}>
+          {post.tags.map((tag, idx) => (
+            <span key={idx} className={styles.postTag}>
+              <Tag size={12} />
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
       
       <div 
         className={styles.content}

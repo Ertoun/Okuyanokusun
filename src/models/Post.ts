@@ -3,6 +3,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface IPost extends Document {
   author: 'Sude' | 'Ertan';
   content: string;
+  tags?: string[];
   media: { type: 'image' | 'video' | 'audio'; url: string }[];
   style: {
     backgroundColor: string;
@@ -34,6 +35,7 @@ const ResponseSchema = new Schema({
 const PostSchema: Schema = new Schema({
   author: { type: String, required: true, enum: ['Sude', 'Ertan'] },
   content: { type: String, required: true },
+  tags: [{ type: String }],
   media: [{
     type: { type: String, enum: ['image', 'video', 'audio'] },
     url: String,

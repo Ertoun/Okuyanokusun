@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "./ComposeModal.module.css";
-import { X, Mic, Image as ImageIcon, Video } from "lucide-react";
+import { X, Mic, Image as ImageIcon, Video, Tag } from "lucide-react";
 import { UserType, PostData } from "@/types/post";
 
 interface ComposeModalProps {
@@ -13,6 +13,7 @@ interface ComposeModalProps {
 
 export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, initialData }: ComposeModalProps) {
   const [content, setContent] = useState("");
+  const [tags, setTags] = useState("");
   const [mediaUrl, setMediaUrl] = useState(""); 
   const [mediaType, setMediaType] = useState<"image" | "video" | "audio" | null>(null);
 
@@ -24,6 +25,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
   useEffect(() => {
     if (initialData) {
       setContent(initialData.content);
+      setTags(initialData.tags?.join(", ") || "");
       if (initialData.media && initialData.media.length > 0) {
         setMediaUrl(initialData.media[0].url);
         setMediaType(initialData.media[0].type);
@@ -37,6 +39,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
       setBgImage(initialData.style.backgroundImage || "");
     } else {
       setContent("");
+      setTags("");
       setMediaUrl("");
       setMediaType(null);
       setBgColor(currentUser === 'Sude' ? '#ffffff' : '#f0f0f0');
@@ -54,6 +57,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
       _id: initialData?._id,
       author: currentUser,
       content,
+      tags: tags.split(",").map(t => t.trim()).filter(t => t !== ""),
       media: mediaUrl && mediaType ? [{ type: mediaType, url: mediaUrl }] : [],
       style: {
         backgroundColor: bgColor,
@@ -94,6 +98,20 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
             required
             style={{ backgroundColor: bgImage || bgColor !== '#ffffff' ? 'rgba(255,255,255,0.7)' : 'transparent', color: 'inherit', fontFamily: 'inherit', border: `1px solid ${textColor}40` }}
           />
+
+          <div className={styles.controlGroup} style={{ width: '100%', marginTop: '1rem' }}>
+            <div className={styles.tagInputWrapper}>
+              <Tag size={18} style={{ opacity: 0.6 }} />
+              <input 
+                type="text" 
+                placeholder="Tags (separated by commas)" 
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                className={styles.input}
+                style={{ backgroundColor: 'transparent', color: 'inherit', border: 'none', padding: '0.5rem', width: '100%' }}
+              />
+            </div>
+          </div>
           
           <div className={styles.mediaInput}>
             <input 
@@ -174,7 +192,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
           )}
 
           <div className={styles.actions}>
-            <button type="submit" className={styles.submitBtn}>Post</button>
+            <button type="submit" className={styles.submitBtn}>{initialData ? 'Save Changes' : 'Post'}</button>
           </div>
         </form>
       </div>

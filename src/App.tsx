@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Timeline from "@/components/Timeline";
 import ComposeModal from "@/components/ComposeModal";
 import LoginModal from "@/components/LoginModal";
+import Clock from "@/components/Clock";
 import styles from "./App.module.css";
 import { Plus, LogIn, LogOut } from "lucide-react";
 import { UserType } from "@/types/post";
@@ -13,7 +14,6 @@ export default function App() {
   const [editingPost, setEditingPost] = useState<any | null>(null);
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
-
   // Fetch posts on mount
   useEffect(() => {
     fetchPosts();
@@ -126,13 +126,21 @@ export default function App() {
   };
 
   if (loading) {
-    return <div className={styles.loading}>Loading...</div>;
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.loader}></div>
+        <p>Opening the diary...</p>
+      </div>
+    );
   }
 
   return (
     <main className={styles.main}>
       <header className={styles.header}>
-        <h1 className={styles.title}>Okuyan okusun</h1>
+        <div className={styles.headerLeft}>
+          <h1 className={styles.title}>Okuyan okusun</h1>
+          <Clock />
+        </div>
         <div className={styles.controls}>
           {currentUser ? (
             <>

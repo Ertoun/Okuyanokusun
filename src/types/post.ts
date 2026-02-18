@@ -30,6 +30,7 @@ export interface PostData {
   _id: string;
   author: UserType;
   content: string;
+  tags?: string[];
   media: PostMedia[];
   style: PostStyle;
   responses: PostResponse[];

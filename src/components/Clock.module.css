@@ -1,0 +1,32 @@
+.clock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: var(--foreground);
+  font-family: var(--font-inter);
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(4px);
+  min-width: 100px;
+}
+
+.time {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.date {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+@media (max-width: 630px) {
+  .clock {
+    display: none;
+  }
+}
