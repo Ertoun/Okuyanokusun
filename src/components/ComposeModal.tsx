@@ -1,13 +1,12 @@
-"use client";
-
 import { useState } from "react";
 import styles from "./ComposeModal.module.css";
 import { X, Mic, Image as ImageIcon, Video } from "lucide-react";
+import { UserType } from "@/types/post";
 
 interface ComposeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  currentUser: "UserA" | "UserB";
+  currentUser: UserType;
   onSubmit: (data: any) => void;
 }
 

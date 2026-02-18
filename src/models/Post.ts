@@ -9,8 +9,21 @@ export interface IPost extends Document {
     textColor: string;
     fontFamily: string;
   };
+  responses: {
+    author: 'UserA' | 'UserB';
+    content: string;
+    musicUrl?: string;
+    createdAt: Date;
+  }[];
   createdAt: Date;
 }
+
+const ResponseSchema = new Schema({
+  author: { type: String, required: true, enum: ['UserA', 'UserB'] },
+  content: { type: String, required: true },
+  musicUrl: { type: String },
+  createdAt: { type: Date, default: Date.now },
+});
 
 const PostSchema: Schema = new Schema({
   author: { type: String, required: true, enum: ['UserA', 'UserB'] },
@@ -26,6 +39,7 @@ const PostSchema: Schema = new Schema({
     textColor: { type: String, default: '#000000' },
     fontFamily: { type: String, default: 'Inter' },
   },
+  responses: [ResponseSchema],
   createdAt: { type: Date, default: Date.now },
 });
 

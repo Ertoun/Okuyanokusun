@@ -35,6 +35,36 @@ app.post('/api/posts', async (req, res) => {
   }
 });
 
+app.post('/api/posts/:id/responses', async (req, res) => {
+  await dbConnect();
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ success: false, error: 'Post not found' });
+    }
+    
+    post.responses.push(req.body);
+    await post.save();
+    
+    res.status(201).json({ success: true, data: post });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+app.delete('/api/posts/:id', async (req, res) => {
+  await dbConnect();
+  try {
+    const deletedPost = await Post.findByIdAndDelete(req.params.id);
+    if (!deletedPost) {
+      return res.status(404).json({ success: false, error: 'Post not found' });
+    }
+    res.json({ success: true, data: {} });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
 // Serve static files from the build directory
 app.use(express.static('dist'));
 

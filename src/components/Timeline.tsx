@@ -1,27 +1,15 @@
-"use client";
-
+import { PostData, UserType } from "@/types/post";
 import PostCard from "./PostCard";
 import styles from "./Timeline.module.css";
-// Importing the interface from PostCard or redefining it. Ideally should be in a shared type file.
-// For now, redefining to match PostCard's expected prop.
-interface PostProps {
-  _id: string;
-  author: 'UserA' | 'UserB';
-  content: string;
-  media: { type: 'image' | 'video' | 'audio'; url: string }[];
-  style: {
-    backgroundColor: string;
-    textColor: string;
-    fontFamily: string;
-  };
-  createdAt: string;
-}
 
 interface TimelineProps {
-  posts: PostProps[];
+  posts: PostData[];
+  currentUser: UserType | null;
+  onRespond: (postId: string, response: any) => Promise<void>;
+  onDelete: (postId: string) => Promise<void>;
 }
 
-export default function Timeline({ posts }: TimelineProps) {
+export default function Timeline({ posts, currentUser, onRespond, onDelete }: TimelineProps) {
   return (
     <div className={styles.container}>
       <div className={styles.line}></div>
@@ -29,7 +17,12 @@ export default function Timeline({ posts }: TimelineProps) {
         {posts.map((post) => (
           <div key={post._id} className={styles.postWrapper}>
             <div className={`${styles.dot} ${post.author === 'UserA' ? styles.dotLeft : styles.dotRight}`}></div>
-            <PostCard post={post} />
+            <PostCard
+              post={post}
+              currentUser={currentUser}
+              onRespond={onRespond}
+              onDelete={onDelete}
+            />
           </div>
         ))}
       </div>

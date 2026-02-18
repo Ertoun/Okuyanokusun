@@ -1,22 +1,40 @@
 import MusicPlayer from "./MusicPlayer";
 import styles from "./PostCard.module.css";
+import { PostData, UserType } from "@/types/post";
+import { useState } from "react";
+import { MessageSquare, Music, Trash2 } from "lucide-react";
 
-// Defining a local interface for the component props to avoid tight coupling with Mongoose document type on client side if possible, 
-// but for simplicity I'll use a type compatible with the serialized IPost.
-interface PostProps {
-  _id: string;
-  author: 'UserA' | 'UserB';
-  content: string;
-  media: { type: 'image' | 'video' | 'audio'; url: string }[];
-  style: {
-    backgroundColor: string;
-    textColor: string;
-    fontFamily: string;
-  };
-  createdAt: string; // serialized date
+interface PostCardProps {
+  post: PostData;
+  currentUser: UserType | null;
+  onRespond: (postId: string, response: any) => Promise<void>;
+  onDelete: (postId: string) => Promise<void>;
 }
 
-export default function PostCard({ post }: { post: PostProps }) {
+export default function PostCard({ post, currentUser, onRespond, onDelete }: PostCardProps) {
+  const [isResponding, setIsResponding] = useState(false);
+  const [responseContent, setResponseContent] = useState("");
+  const [musicUrl, setMusicUrl] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmitResponse = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!responseContent.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      await onRespond(post._id, {
+        author: currentUser,
+        content: responseContent,
+        musicUrl: musicUrl || undefined,
+      });
+      setResponseContent("");
+      setMusicUrl("");
+      setIsResponding(false);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <article
       className={styles.card}
@@ -28,7 +46,18 @@ export default function PostCard({ post }: { post: PostProps }) {
     >
       <header className={styles.header}>
         <h3 className={styles.author}>{post.author}</h3>
-        <time className={styles.date}>{new Date(post.createdAt).toLocaleDateString()}</time>
+        <div className={styles.headerRight}>
+          <time className={styles.date}>{new Date(post.createdAt).toLocaleDateString()}</time>
+          {currentUser === post.author && (
+            <button 
+              className={styles.deleteBtn} 
+              onClick={() => onDelete(post._id)}
+              title="Delete post"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+        </div>
       </header>
       
       <div className={styles.content}>
@@ -56,6 +85,77 @@ export default function PostCard({ post }: { post: PostProps }) {
             </div>
           ))}
         </div>
+      )}
+      {post.responses && post.responses.length > 0 && (
+        <div className={styles.responsesSection}>
+          <h4 className={styles.responsesTitle}>Responses</h4>
+          {post.responses.map((resp, i) => (
+            <div key={i} className={styles.responseCard}>
+              <div className={styles.responseHeader}>
+                <span className={styles.responseAuthor}>{resp.author}</span>
+                <span className={styles.responseDate}>{new Date(resp.createdAt).toLocaleDateString()}</span>
+              </div>
+              <p className={styles.responseContent}>{resp.content}</p>
+              {resp.musicUrl && (
+                <div className={styles.responseMusic}>
+                  <MusicPlayer src={resp.musicUrl} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {currentUser && (
+        <div className={styles.footer}>
+          <button 
+            className={styles.respondTrigger} 
+            onClick={() => setIsResponding(!isResponding)}
+          >
+            <MessageSquare size={18} />
+            Respond
+          </button>
+        </div>
+      )}
+
+      {isResponding && (
+        <form className={styles.responseForm} onSubmit={handleSubmitResponse}>
+          <textarea
+            className={styles.responseInput}
+            placeholder="Add your thoughts..."
+            value={responseContent}
+            onChange={(e) => setResponseContent(e.target.value)}
+            disabled={isSubmitting}
+          />
+          <div className={styles.musicInputGroup}>
+            <Music size={16} />
+            <input
+              type="text"
+              className={styles.musicInput}
+              placeholder="Add music URL (optional commentary)"
+              value={musicUrl}
+              onChange={(e) => setMusicUrl(e.target.value)}
+              disabled={isSubmitting}
+            />
+          </div>
+          <div className={styles.formActions}>
+            <button 
+              type="button" 
+              className={styles.cancelBtn} 
+              onClick={() => setIsResponding(false)}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </button>
+            <button 
+              type="submit" 
+              className={styles.submitBtn}
+              disabled={isSubmitting || !responseContent.trim()}
+            >
+              {isSubmitting ? "Sending..." : "Post Response"}
+            </button>
+          </div>
+        </form>
       )}
     </article>
   );

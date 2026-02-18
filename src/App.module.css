@@ -56,6 +56,30 @@
   opacity: 0.9;
 }
 
+.welcome {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.logoutBtn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.logoutBtn:hover {
+  background: rgba(128, 128, 128, 0.1);
+}
+
+.loginGroup {
+  display: flex;
+  align-items: center;
+}
+
 @media (max-width: 600px) {
   .header {
     flex-direction: column;
