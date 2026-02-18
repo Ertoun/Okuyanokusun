@@ -2,7 +2,7 @@ import MusicPlayer from "./MusicPlayer";
 import styles from "./PostCard.module.css";
 import { PostData, UserType } from "@/types/post";
 import { useState } from "react";
-import { MessageSquare, Music, Trash2, Edit2 } from "lucide-react";
+import { MessageSquare, Music, Trash2, Edit2, Heart, Frown, Smile } from "lucide-react";
 
 interface PostCardProps {
   post: PostData;
@@ -10,9 +10,10 @@ interface PostCardProps {
   onRespond: (postId: string, response: any) => Promise<void>;
   onDelete: (postId: string) => Promise<void>;
   onEdit: (post: PostData) => void;
+  onReact: (postId: string, type: 'heart' | 'sad' | 'happy') => Promise<void>;
 }
 
-export default function PostCard({ post, currentUser, onRespond, onDelete, onEdit }: PostCardProps) {
+export default function PostCard({ post, currentUser, onRespond, onDelete, onEdit, onReact }: PostCardProps) {
   const [isResponding, setIsResponding] = useState(false);
   const [responseContent, setResponseContent] = useState("");
   const [musicUrl, setMusicUrl] = useState("");
@@ -36,6 +37,11 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
       setIsSubmitting(false);
     }
   };
+
+  const isAuthor = currentUser === post.author || 
+                   (currentUser === 'Sude' && (post.author as any) === 'UserA') || 
+                   (currentUser === 'Ertan' && (post.author as any) === 'UserB');
+
   return (
     <article
       className={styles.card}
@@ -52,7 +58,7 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
         <h3 className={styles.author}>{post.author}</h3>
         <div className={styles.headerRight}>
           <time className={styles.date}>{new Date(post.createdAt).toLocaleDateString()}</time>
-          {currentUser === post.author && (
+          {isAuthor && (
             <>
               <button 
                 className={styles.actionBtn} 
@@ -107,6 +113,22 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
           ))}
         </div>
       )}
+
+      <div className={styles.reactionsBar}>
+        <button onClick={() => onReact(post._id, 'heart')} className={styles.reactionBtn}>
+          <Heart size={18} fill={post.reactions?.heart > 0 ? "#ff4d4f" : "none"} color={post.reactions?.heart > 0 ? "#ff4d4f" : "currentColor"} />
+          <span>{post.reactions?.heart || 0}</span>
+        </button>
+        <button onClick={() => onReact(post._id, 'sad')} className={styles.reactionBtn}>
+          <Frown size={18} />
+          <span>{post.reactions?.sad || 0}</span>
+        </button>
+        <button onClick={() => onReact(post._id, 'happy')} className={styles.reactionBtn}>
+          <Smile size={18} />
+          <span>{post.reactions?.happy || 0}</span>
+        </button>
+      </div>
+
       {post.responses && post.responses.length > 0 && (
         <div className={styles.responsesSection}>
           <h4 className={styles.responsesTitle}>Responses</h4>
@@ -127,17 +149,21 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
         </div>
       )}
 
-      {currentUser && (
-        <div className={styles.footer}>
-          <button 
-            className={styles.respondTrigger} 
-            onClick={() => setIsResponding(!isResponding)}
-          >
-            <MessageSquare size={18} />
-            Respond
-          </button>
-        </div>
-      )}
+      <div className={styles.footer}>
+        <button 
+          className={styles.respondTrigger} 
+          onClick={() => {
+            if (!currentUser) {
+              alert("Please login to respond");
+              return;
+            }
+            setIsResponding(!isResponding);
+          }}
+        >
+          <MessageSquare size={18} />
+          Respond
+        </button>
+      </div>
 
       {isResponding && (
         <form className={styles.responseForm} onSubmit={handleSubmitResponse}>

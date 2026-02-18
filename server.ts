@@ -52,6 +52,23 @@ app.post('/api/posts/:id/responses', async (req, res) => {
   }
 });
 
+app.post('/api/posts/:id/reactions', async (req, res) => {
+  await dbConnect();
+  try {
+    const { type } = req.body; // heart, sad, happy
+    const update = { $inc: { [`reactions.${type}`]: 1 } };
+    const updatedPost = await Post.findByIdAndUpdate(req.params.id, update, { new: true });
+    
+    if (!updatedPost) {
+      return res.status(404).json({ success: false, error: 'Post not found' });
+    }
+    
+    res.json({ success: true, data: updatedPost });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
 app.put('/api/posts/:id', async (req, res) => {
   await dbConnect();
   try {

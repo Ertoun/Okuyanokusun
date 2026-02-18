@@ -103,6 +103,28 @@ export default function App() {
     }
   };
 
+  const handleReaction = async (postId: string, type: 'heart' | 'sad' | 'happy') => {
+    try {
+      const res = await fetch(`/api/posts/${postId}/reactions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ type }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPosts((prevPosts) => 
+          prevPosts.map((post) => 
+            post._id === postId ? data.data : post
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Failed to react to post:", error);
+    }
+  };
+
   if (loading) {
     return <div className={styles.loading}>Loading...</div>;
   }
@@ -138,6 +160,7 @@ export default function App() {
         onRespond={handleResponse}
         onDelete={handleDeletePost}
         onEdit={handleEditClick}
+        onReact={handleReaction}
       />
       
       {currentUser && (

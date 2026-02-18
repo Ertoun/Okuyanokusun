@@ -1,4 +1,4 @@
-export type UserType = 'UserA' | 'UserB';
+export type UserType = 'Sude' | 'Ertan';
 
 export interface PostStyle {
   backgroundColor: string;
@@ -19,6 +19,12 @@ export interface PostResponse {
   createdAt: string;
 }
 
+export interface PostReactions {
+  heart: number;
+  sad: number;
+  happy: number;
+}
+
 export interface PostData {
   _id: string;
   author: UserType;
@@ -26,5 +32,6 @@ export interface PostData {
   media: PostMedia[];
   style: PostStyle;
   responses: PostResponse[];
+  reactions: PostReactions;
   createdAt: string;
 }

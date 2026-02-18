@@ -16,7 +16,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
   const [mediaUrl, setMediaUrl] = useState(""); 
   const [mediaType, setMediaType] = useState<"image" | "video" | "audio" | null>(null);
 
-  const [bgColor, setBgColor] = useState(currentUser === 'UserA' ? '#ffffff' : '#f0f0f0');
+  const [bgColor, setBgColor] = useState(currentUser === 'Sude' ? '#ffffff' : '#f0f0f0');
   const [textColor, setTextColor] = useState('#000000');
   const [fontFamily, setFontFamily] = useState('var(--font-inter)');
   const [bgImage, setBgImage] = useState("");
@@ -39,7 +39,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
       setContent("");
       setMediaUrl("");
       setMediaType(null);
-      setBgColor(currentUser === 'UserA' ? '#ffffff' : '#f0f0f0');
+      setBgColor(currentUser === 'Sude' ? '#ffffff' : '#f0f0f0');
       setTextColor('#000000');
       setFontFamily('var(--font-inter)');
       setBgImage("");

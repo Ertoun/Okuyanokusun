@@ -22,8 +22,8 @@ export default function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps
     setError("");
 
     // Simple demo logic
-    if ((username === "UserA" || username === "UserB") && password === "1234") {
-      onLogin(username);
+    if ((username === "Sude" || username === "Ertan") && password === "1234") {
+      onLogin(username as UserType);
       setPassword("");
       setUsername("");
       onClose();

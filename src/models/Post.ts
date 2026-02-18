@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IPost extends Document {
-  author: 'UserA' | 'UserB';
+  author: 'Sude' | 'Ertan';
   content: string;
   media: { type: 'image' | 'video' | 'audio'; url: string }[];
   style: {
@@ -11,30 +11,33 @@ export interface IPost extends Document {
     backgroundImage?: string;
   };
   responses: {
-    author: 'UserA' | 'UserB';
+    author: 'Sude' | 'Ertan';
     content: string;
     musicUrl?: string;
     createdAt: Date;
   }[];
+  reactions: {
+    heart: number;
+    sad: number;
+    happy: number;
+  };
   createdAt: Date;
 }
 
 const ResponseSchema = new Schema({
-  author: { type: String, required: true, enum: ['UserA', 'UserB'] },
+  author: { type: String, required: true, enum: ['Sude', 'Ertan'] },
   content: { type: String, required: true },
   musicUrl: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 
 const PostSchema: Schema = new Schema({
-  author: { type: String, required: true, enum: ['UserA', 'UserB'] },
+  author: { type: String, required: true, enum: ['Sude', 'Ertan'] },
   content: { type: String, required: true },
-  media: [
-    {
-      type: { type: String, enum: ['image', 'video', 'audio'] },
-      url: { type: String },
-    },
-  ],
+  media: [{
+    type: { type: String, enum: ['image', 'video', 'audio'] },
+    url: String,
+  }],
   style: {
     backgroundColor: { type: String, default: '#ffffff' },
     textColor: { type: String, default: '#000000' },
@@ -42,6 +45,11 @@ const PostSchema: Schema = new Schema({
     backgroundImage: { type: String },
   },
   responses: [ResponseSchema],
+  reactions: {
+    heart: { type: Number, default: 0 },
+    sad: { type: Number, default: 0 },
+    happy: { type: Number, default: 0 },
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
