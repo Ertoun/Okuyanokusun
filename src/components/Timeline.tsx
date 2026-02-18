@@ -7,9 +7,10 @@ interface TimelineProps {
   currentUser: UserType | null;
   onRespond: (postId: string, response: any) => Promise<void>;
   onDelete: (postId: string) => Promise<void>;
+  onEdit: (post: PostData) => void;
 }
 
-export default function Timeline({ posts, currentUser, onRespond, onDelete }: TimelineProps) {
+export default function Timeline({ posts, currentUser, onRespond, onDelete, onEdit }: TimelineProps) {
   return (
     <div className={styles.container}>
       <div className={styles.line}></div>
@@ -22,6 +23,7 @@ export default function Timeline({ posts, currentUser, onRespond, onDelete }: Ti
               currentUser={currentUser}
               onRespond={onRespond}
               onDelete={onDelete}
+              onEdit={onEdit}
             />
           </div>
         ))}

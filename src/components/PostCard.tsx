@@ -2,16 +2,17 @@ import MusicPlayer from "./MusicPlayer";
 import styles from "./PostCard.module.css";
 import { PostData, UserType } from "@/types/post";
 import { useState } from "react";
-import { MessageSquare, Music, Trash2 } from "lucide-react";
+import { MessageSquare, Music, Trash2, Edit2 } from "lucide-react";
 
 interface PostCardProps {
   post: PostData;
   currentUser: UserType | null;
   onRespond: (postId: string, response: any) => Promise<void>;
   onDelete: (postId: string) => Promise<void>;
+  onEdit: (post: PostData) => void;
 }
 
-export default function PostCard({ post, currentUser, onRespond, onDelete }: PostCardProps) {
+export default function PostCard({ post, currentUser, onRespond, onDelete, onEdit }: PostCardProps) {
   const [isResponding, setIsResponding] = useState(false);
   const [responseContent, setResponseContent] = useState("");
   const [musicUrl, setMusicUrl] = useState("");
@@ -52,13 +53,22 @@ export default function PostCard({ post, currentUser, onRespond, onDelete }: Pos
         <div className={styles.headerRight}>
           <time className={styles.date}>{new Date(post.createdAt).toLocaleDateString()}</time>
           {currentUser === post.author && (
-            <button 
-              className={styles.deleteBtn} 
-              onClick={() => onDelete(post._id)}
-              title="Delete post"
-            >
-              <Trash2 size={16} />
-            </button>
+            <>
+              <button 
+                className={styles.actionBtn} 
+                onClick={() => onEdit(post)}
+                title="Edit post"
+              >
+                <Edit2 size={16} />
+              </button>
+              <button 
+                className={styles.actionBtn} 
+                onClick={() => onDelete(post._id)}
+                title="Delete post"
+              >
+                <Trash2 size={16} />
+              </button>
+            </>
           )}
         </div>
       </header>

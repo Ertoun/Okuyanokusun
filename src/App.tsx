@@ -10,6 +10,7 @@ export default function App() {
   const [posts, setPosts] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [editingPost, setEditingPost] = useState<any | null>(null);
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -32,23 +33,36 @@ export default function App() {
     }
   };
 
-  const handleNewPost = async (newPostData: any) => {
+  const handlePostSubmit = async (postData: any) => {
+    const isEditing = !!postData._id;
+    const url = isEditing ? `/api/posts/${postData._id}` : '/api/posts';
+    const method = isEditing ? 'PUT' : 'POST';
+
     try {
-      const res = await fetch('/api/posts', {
-        method: 'POST',
+      const res = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newPostData),
+        body: JSON.stringify(postData),
       });
       const data = await res.json();
       if (data.success) {
-        setPosts((prev) => [data.data, ...prev]);
-        fetchPosts(); 
+        if (isEditing) {
+          setPosts((prev) => prev.map(p => p._id === postData._id ? data.data : p));
+        } else {
+          setPosts((prev) => [data.data, ...prev]);
+        }
+        setEditingPost(null);
       }
     } catch (error) {
-      console.error("Failed to create post:", error);
+      console.error("Failed to submit post:", error);
     }
+  };
+
+  const handleEditClick = (post: any) => {
+    setEditingPost(post);
+    setIsModalOpen(true);
   };
 
   const handleResponse = async (postId: string, responseData: any) => {
@@ -104,7 +118,7 @@ export default function App() {
               <button onClick={() => setCurrentUser(null)} className={styles.logoutBtn}>
                 <LogOut size={18} />
               </button>
-              <button onClick={() => setIsModalOpen(true)} className={styles.composeBtn}>
+              <button onClick={() => { setEditingPost(null); setIsModalOpen(true); }} className={styles.composeBtn}>
                 <Plus size={20} />
                 <span>Write</span>
               </button>
@@ -123,14 +137,16 @@ export default function App() {
         currentUser={currentUser} 
         onRespond={handleResponse}
         onDelete={handleDeletePost}
+        onEdit={handleEditClick}
       />
       
       {currentUser && (
         <ComposeModal 
           isOpen={isModalOpen} 
-          onClose={() => setIsModalOpen(false)} 
+          onClose={() => { setIsModalOpen(false); setEditingPost(null); }} 
           currentUser={currentUser}
-          onSubmit={handleNewPost}
+          onSubmit={handlePostSubmit}
+          initialData={editingPost}
         />
       )}
 

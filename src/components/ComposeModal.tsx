@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./ComposeModal.module.css";
 import { X, Mic, Image as ImageIcon, Video } from "lucide-react";
-import { UserType } from "@/types/post";
+import { UserType, PostData } from "@/types/post";
 
 interface ComposeModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentUser: UserType;
   onSubmit: (data: any) => void;
+  initialData?: PostData | null;
 }
 
-export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }: ComposeModalProps) {
+export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, initialData }: ComposeModalProps) {
   const [content, setContent] = useState("");
   const [mediaUrl, setMediaUrl] = useState(""); 
   const [mediaType, setMediaType] = useState<"image" | "video" | "audio" | null>(null);
@@ -20,11 +21,37 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
   const [fontFamily, setFontFamily] = useState('var(--font-inter)');
   const [bgImage, setBgImage] = useState("");
 
+  useEffect(() => {
+    if (initialData) {
+      setContent(initialData.content);
+      if (initialData.media && initialData.media.length > 0) {
+        setMediaUrl(initialData.media[0].url);
+        setMediaType(initialData.media[0].type);
+      } else {
+        setMediaUrl("");
+        setMediaType(null);
+      }
+      setBgColor(initialData.style.backgroundColor);
+      setTextColor(initialData.style.textColor);
+      setFontFamily(initialData.style.fontFamily);
+      setBgImage(initialData.style.backgroundImage || "");
+    } else {
+      setContent("");
+      setMediaUrl("");
+      setMediaType(null);
+      setBgColor(currentUser === 'UserA' ? '#ffffff' : '#f0f0f0');
+      setTextColor('#000000');
+      setFontFamily('var(--font-inter)');
+      setBgImage("");
+    }
+  }, [initialData, currentUser, isOpen]);
+
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const newPost = {
+    const postData = {
+      _id: initialData?._id,
       author: currentUser,
       content,
       media: mediaUrl && mediaType ? [{ type: mediaType, url: mediaUrl }] : [],
@@ -35,14 +62,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
         backgroundImage: bgImage || undefined,
       },
     };
-    onSubmit(newPost);
-    setContent("");
-    setMediaUrl("");
-    setMediaType(null);
-    setBgColor(currentUser === 'UserA' ? '#ffffff' : '#f0f0f0');
-    setTextColor('#000000');
-    setFontFamily('var(--font-inter)');
-    setBgImage("");
+    onSubmit(postData);
     onClose();
   };
 
@@ -60,7 +80,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
         }}
       >
         <div className={styles.header}>
-          <h2>New Entry as {currentUser}</h2>
+          <h2>{initialData ? 'Edit Entry' : 'New Entry'} as {currentUser}</h2>
           <button onClick={onClose} className={styles.closeBtn} style={{ color: textColor }}><X size={24} /></button>
         </div>
         

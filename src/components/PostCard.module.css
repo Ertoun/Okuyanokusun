@@ -36,7 +36,7 @@
   opacity: 0.7;
 }
 
-.deleteBtn {
+.actionBtn {
   background: transparent;
   border: none;
   color: var(--foreground);
@@ -50,10 +50,13 @@
   transition: all 0.2s;
 }
 
-.deleteBtn:hover {
+.actionBtn:hover {
   opacity: 1;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.actionBtn:hover svg[class*="Trash2"] {
   color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
 }
 
 .content {

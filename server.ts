@@ -52,6 +52,23 @@ app.post('/api/posts/:id/responses', async (req, res) => {
   }
 });
 
+app.put('/api/posts/:id', async (req, res) => {
+  await dbConnect();
+  try {
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedPost) {
+      return res.status(404).json({ success: false, error: 'Post not found' });
+    }
+    res.json({ success: true, data: updatedPost });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
 app.delete('/api/posts/:id', async (req, res) => {
   await dbConnect();
   try {
