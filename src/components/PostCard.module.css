@@ -106,10 +106,11 @@
 }
 
 .responseCard {
-  background: rgba(128, 128, 128, 0.05);
+  background: #fffafa;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 1rem;
+  border: 1px solid var(--border);
 }
 
 .responseHeader {

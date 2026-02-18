@@ -94,11 +94,29 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
           <div className={styles.customizationControls}>
             <div className={styles.controlGroup}>
               <label>Bg</label>
-              <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} />
+              <div className={styles.colorPickerGroup}>
+                <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} />
+                <input 
+                  type="text" 
+                  value={bgColor} 
+                  onChange={(e) => setBgColor(e.target.value)} 
+                  className={styles.hexInput}
+                  placeholder="#FFFFFF"
+                />
+              </div>
             </div>
             <div className={styles.controlGroup}>
               <label>Text</label>
-              <input type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} />
+              <div className={styles.colorPickerGroup}>
+                <input type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} />
+                <input 
+                  type="text" 
+                  value={textColor} 
+                  onChange={(e) => setTextColor(e.target.value)} 
+                  className={styles.hexInput}
+                  placeholder="#000000"
+                />
+              </div>
             </div>
             <div className={styles.controlGroup}>
               <label>Font</label>
@@ -106,6 +124,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit }:
                 value={fontFamily} 
                 onChange={(e) => setFontFamily(e.target.value)}
                 style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: 'inherit', borderColor: `${textColor}40` }}
+                className={styles.select}
               >
                 <option value="var(--font-inter)">Inter</option>
                 <option value="var(--font-playfair)">Playfair</option>

@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
 import Timeline from "@/components/Timeline";
 import ComposeModal from "@/components/ComposeModal";
+import LoginModal from "@/components/LoginModal";
 import styles from "./App.module.css";
-import { Plus } from "lucide-react";
+import { Plus, LogIn, LogOut } from "lucide-react";
+import { UserType } from "@/types/post";
 
 export default function App() {
   const [posts, setPosts] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<"UserA" | "UserB" | null>(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Fetch posts on mount
@@ -40,9 +43,8 @@ export default function App() {
       });
       const data = await res.json();
       if (data.success) {
-        // Optimistically update or re-fetch
         setPosts((prev) => [data.data, ...prev]);
-        fetchPosts(); // to ensure consistency
+        fetchPosts(); 
       }
     } catch (error) {
       console.error("Failed to create post:", error);
@@ -60,7 +62,6 @@ export default function App() {
       });
       const data = await res.json();
       if (data.success) {
-        // Update the posts locally to show the new response
         setPosts((prevPosts) => 
           prevPosts.map((post) => 
             post._id === postId ? data.data : post
@@ -99,34 +100,20 @@ export default function App() {
         <div className={styles.controls}>
           {currentUser ? (
             <>
-              <span className={styles.welcome}>Welcome, {currentUser}</span>
-              <button onClick={() => setCurrentUser(null)} className={styles.logoutBtn}>Logout</button>
+              <span className={styles.welcome}>Hi, {currentUser}</span>
+              <button onClick={() => setCurrentUser(null)} className={styles.logoutBtn}>
+                <LogOut size={18} />
+              </button>
               <button onClick={() => setIsModalOpen(true)} className={styles.composeBtn}>
                 <Plus size={20} />
-                Write
+                <span>Write</span>
               </button>
             </>
           ) : (
-            <div className={styles.loginGroup}>
-              <select 
-                onChange={(e) => {
-                  const user = e.target.value as "UserA" | "UserB";
-                  const pass = prompt(`Enter PIN for ${user}:`);
-                  // Simple hardcoded check for demo - in reality use .env/db
-                  if (pass === "1234") { 
-                    setCurrentUser(user);
-                  } else {
-                    alert("Wrong PIN");
-                  }
-                }}
-                className={styles.userSelect}
-                value=""
-              >
-                <option value="" disabled>Login as...</option>
-                <option value="UserA">UserA</option>
-                <option value="UserB">UserB</option>
-              </select>
-            </div>
+            <button onClick={() => setIsLoginModalOpen(true)} className={styles.loginBtn}>
+              <LogIn size={20} />
+              <span>Login</span>
+            </button>
           )}
         </div>
       </header>
@@ -146,6 +133,12 @@ export default function App() {
           onSubmit={handleNewPost}
         />
       )}
+
+      <LoginModal 
+        isOpen={isLoginModalOpen} 
+        onClose={() => setIsLoginModalOpen(false)} 
+        onLogin={(user) => setCurrentUser(user)}
+      />
     </main>
   );
 }
