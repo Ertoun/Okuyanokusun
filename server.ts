@@ -214,6 +214,7 @@ app.delete('/api/posts/:id', async (req, res) => {
 
 // Serve static files from the build directory
 app.use(express.static('dist'));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Handle React routing, return all requests to React app
 app.get('*any', (_req, res) => {

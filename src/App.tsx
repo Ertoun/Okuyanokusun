@@ -6,7 +6,7 @@ import MoodPicker from "@/components/MoodPicker";
 import MoodBanner from "@/components/MoodBanner";
 import Clock from "@/components/Clock";
 import styles from "./App.module.css";
-import { Plus, LogIn, LogOut } from "lucide-react";
+import { Plus, LogIn, LogOut, Feather } from "lucide-react";
 import { UserType } from "@/types/post";
 
 export default function App() {
@@ -156,11 +156,18 @@ export default function App() {
     <main className={styles.main}>
       <header className={styles.header}>
         <div className={styles.headerLeft}>
+          
           <h1 className={styles.title} onClick={() => window.location.href = '/'}>
-            Okuyan okusun
+            <img 
+            src="/uploads/logo.jpg" 
+            alt="Okuyan okusun logo" 
+            className={styles.logo}
+            onClick={() => window.location.href = '/'}
+          />
+          <span>Okuyan okusun</span>
           </h1>
-          <Clock />
         </div>
+        <Clock />
         <div className={styles.controls}>
           {currentUser ? (
             <>
@@ -176,7 +183,7 @@ export default function App() {
                 {currentUserMood?.emoji || '😶'}
               </button>
               <button onClick={() => { setEditingPost(null); setIsModalOpen(true); }} className={styles.composeBtn}>
-                <Plus size={20} />
+                <Feather size={20} />
                 <span>Write</span>
               </button>
             </>
