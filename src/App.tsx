@@ -6,7 +6,7 @@ import MoodPicker from "@/components/MoodPicker";
 import MoodBanner from "@/components/MoodBanner";
 import Clock from "@/components/Clock";
 import styles from "./App.module.css";
-import { Plus, LogIn, LogOut, Feather } from "lucide-react";
+import { LogIn, LogOut, Feather } from "lucide-react";
 import { UserType } from "@/types/post";
 
 export default function App() {
