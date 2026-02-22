@@ -11,6 +11,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import dbConnect from './src/lib/db';
 import Post from './src/models/Post';
+import Mood from './src/models/Mood';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -57,6 +58,40 @@ app.post('/api/upload', upload.single('file'), (req: any, res: any) => {
   if (mimeType.startsWith('video')) type = 'video';
   else if (mimeType.startsWith('audio')) type = 'audio';
   res.json({ success: true, url, type });
+});
+
+// Mood endpoints
+app.get('/api/moods', async (_req, res) => {
+  await dbConnect();
+  try {
+    const now = new Date();
+    const moods = await Mood.find({ expiresAt: { $gt: now } });
+    res.json({ success: true, data: moods });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
+});
+
+app.post('/api/moods/:user', async (req, res) => {
+  await dbConnect();
+  try {
+    const { user } = req.params;
+    const { emoji, label } = req.body;
+    if (!emoji) {
+      // Clear mood
+      await Mood.deleteOne({ user });
+      return res.json({ success: true, data: null });
+    }
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    const mood = await Mood.findOneAndUpdate(
+      { user },
+      { user, emoji, label, expiresAt },
+      { upsert: true, returnDocument: 'after' }
+    );
+    res.json({ success: true, data: mood });
+  } catch (error) {
+    res.status(400).json({ success: false, error: (error as Error).message });
+  }
 });
 
 // Routes

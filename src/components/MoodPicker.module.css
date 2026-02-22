@@ -1,0 +1,156 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.sheet {
+  background: var(--background);
+  width: 100%;
+  max-width: 520px;
+  border-radius: 24px 24px 0 0;
+  padding: 1rem 1.5rem 2.5rem;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.handle {
+  width: 40px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 100px;
+  margin: 0 auto 1.25rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--foreground);
+}
+
+.subtitle {
+  font-size: 0.8rem;
+  opacity: 0.5;
+  margin: 0 0 1.5rem;
+}
+
+.closeBtn {
+  background: rgba(0, 0, 0, 0.05);
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100px;
+  color: var(--foreground);
+  transition: all 0.2s;
+}
+
+.closeBtn:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.moodBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem 0.5rem;
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.moodBtn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  transform: scale(1.05);
+}
+
+.moodBtn.selected {
+  border-color: var(--accent);
+  background: rgba(0, 0, 0, 0.04);
+  transform: scale(1.05);
+}
+
+.moodEmoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.moodLabel {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--foreground);
+  opacity: 0.7;
+}
+
+.clearBtn {
+  width: 100%;
+  margin-top: 1.25rem;
+  padding: 0.75rem;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--foreground);
+  opacity: 0.5;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.clearBtn:hover {
+  opacity: 0.8;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+@media (min-width: 600px) {
+  .overlay {
+    align-items: center;
+  }
+
+  .sheet {
+    border-radius: 24px;
+    max-width: 420px;
+    padding: 1.5rem 2rem 2rem;
+  }
+
+  .handle {
+    display: none;
+  }
+}

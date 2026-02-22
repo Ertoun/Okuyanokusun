@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import Timeline from "@/components/Timeline";
 import ComposeModal from "@/components/ComposeModal";
 import LoginModal from "@/components/LoginModal";
+import MoodPicker from "@/components/MoodPicker";
+import MoodBanner from "@/components/MoodBanner";
 import Clock from "@/components/Clock";
 import styles from "./App.module.css";
 import { Plus, LogIn, LogOut } from "lucide-react";
@@ -11,25 +13,54 @@ export default function App() {
   const [posts, setPosts] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isMoodPickerOpen, setIsMoodPickerOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<any | null>(null);
   const [currentUser, setCurrentUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
-  // Fetch posts on mount
+  const [moods, setMoods] = useState<any[]>([]);
+
   useEffect(() => {
     fetchPosts();
+    fetchMoods();
   }, []);
 
   const fetchPosts = async () => {
     try {
       const res = await fetch('/api/posts');
       const data = await res.json();
-      if (data.success) {
-        setPosts(data.data);
-      }
+      if (data.success) setPosts(data.data);
     } catch (error) {
       console.error("Failed to fetch posts:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMoods = async () => {
+    try {
+      const res = await fetch('/api/moods');
+      const data = await res.json();
+      if (data.success) setMoods(data.data);
+    } catch (error) {
+      console.error("Failed to fetch moods:", error);
+    }
+  };
+
+  const handleMoodSelect = async (emoji: string, label: string) => {
+    if (!currentUser) return;
+    try {
+      const res = await fetch(`/api/moods/${currentUser}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emoji, label }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Refresh moods from server
+        fetchMoods();
+      }
+    } catch (error) {
+      console.error("Failed to set mood:", error);
     }
   };
 
@@ -41,9 +72,7 @@ export default function App() {
     try {
       const res = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(postData),
       });
       const data = await res.json();
@@ -69,17 +98,13 @@ export default function App() {
     try {
       const res = await fetch(`/api/posts/${postId}/responses`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(responseData),
       });
       const data = await res.json();
       if (data.success) {
-        setPosts((prevPosts) => 
-          prevPosts.map((post) => 
-            post._id === postId ? data.data : post
-          )
+        setPosts((prevPosts) =>
+          prevPosts.map((post) => post._id === postId ? data.data : post)
         );
       }
     } catch (error) {
@@ -89,15 +114,10 @@ export default function App() {
 
   const handleDeletePost = async (postId: string) => {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
-    
     try {
-      const res = await fetch(`/api/posts/${postId}`, {
-        method: 'DELETE',
-      });
+      const res = await fetch(`/api/posts/${postId}`, { method: 'DELETE' });
       const data = await res.json();
-      if (data.success) {
-        setPosts((prev) => prev.filter((p) => p._id !== postId));
-      }
+      if (data.success) setPosts((prev) => prev.filter((p) => p._id !== postId));
     } catch (error) {
       console.error("Failed to delete post:", error);
     }
@@ -107,23 +127,21 @@ export default function App() {
     try {
       const res = await fetch(`/api/posts/${postId}/reactions`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type }),
       });
       const data = await res.json();
       if (data.success) {
-        setPosts((prevPosts) => 
-          prevPosts.map((post) => 
-            post._id === postId ? data.data : post
-          )
+        setPosts((prevPosts) =>
+          prevPosts.map((post) => post._id === postId ? data.data : post)
         );
       }
     } catch (error) {
       console.error("Failed to react to post:", error);
     }
   };
+
+  const currentUserMood = moods.find(m => m.user === currentUser);
 
   if (loading) {
     return (
@@ -150,6 +168,13 @@ export default function App() {
               <button onClick={() => setCurrentUser(null)} className={styles.logoutBtn}>
                 <LogOut size={18} />
               </button>
+              <button
+                onClick={() => setIsMoodPickerOpen(true)}
+                className={styles.moodBtn}
+                title="Set your mood"
+              >
+                {currentUserMood?.emoji || '😶'}
+              </button>
               <button onClick={() => { setEditingPost(null); setIsModalOpen(true); }} className={styles.composeBtn}>
                 <Plus size={20} />
                 <span>Write</span>
@@ -164,28 +189,37 @@ export default function App() {
         </div>
       </header>
 
-      <Timeline 
-        posts={posts} 
-        currentUser={currentUser} 
+      <MoodBanner moods={moods} />
+
+      <Timeline
+        posts={posts}
+        currentUser={currentUser}
         onRespond={handleResponse}
         onDelete={handleDeletePost}
         onEdit={handleEditClick}
         onReact={handleReaction}
       />
-      
+
       {currentUser && (
-        <ComposeModal 
-          isOpen={isModalOpen} 
-          onClose={() => { setIsModalOpen(false); setEditingPost(null); }} 
+        <ComposeModal
+          isOpen={isModalOpen}
+          onClose={() => { setIsModalOpen(false); setEditingPost(null); }}
           currentUser={currentUser}
           onSubmit={handlePostSubmit}
           initialData={editingPost}
         />
       )}
 
-      <LoginModal 
-        isOpen={isLoginModalOpen} 
-        onClose={() => setIsLoginModalOpen(false)} 
+      <MoodPicker
+        isOpen={isMoodPickerOpen}
+        onClose={() => setIsMoodPickerOpen(false)}
+        onSelect={handleMoodSelect}
+        currentEmoji={currentUserMood?.emoji}
+      />
+
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
         onLogin={(user) => setCurrentUser(user)}
       />
     </main>

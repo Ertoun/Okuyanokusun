@@ -60,6 +60,28 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
+.moodBtn {
+  font-size: 1.4rem;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  width: 2.4rem;
+  height: 2.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.moodBtn:hover {
+  transform: scale(1.15);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+
 .loginBtn {
   display: flex;
   align-items: center;
