@@ -12,7 +12,7 @@ export default function Clock() {
   return (
     <div className={styles.clock}>
       <span className={styles.time}>{time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-      <span className={styles.date}>{time.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}</span>
+      <span className={styles.date}>{time.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' })}</span>
     </div>
   );
 }

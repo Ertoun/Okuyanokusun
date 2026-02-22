@@ -1,7 +1,7 @@
 .clock {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   color: var(--foreground);
   font-family: var(--font-inter);
   padding: 0.5rem 1rem;
@@ -23,10 +23,4 @@
   opacity: 0.6;
   text-transform: uppercase;
   font-weight: 500;
-}
-
-@media (max-width: 630px) {
-  .clock {
-    display: none;
-  }
 }

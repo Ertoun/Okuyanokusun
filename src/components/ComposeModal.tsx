@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import styles from "./ComposeModal.module.css";
-import { X, Mic, Image as ImageIcon, Video, Tag } from "lucide-react";
+import { X, Mic, Image as ImageIcon, Video, Tag, Upload, Link } from "lucide-react";
 import { UserType, PostData } from "@/types/post";
 
 interface ComposeModalProps {
@@ -16,6 +16,10 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
   const [tags, setTags] = useState("");
   const [mediaUrl, setMediaUrl] = useState(""); 
   const [mediaType, setMediaType] = useState<"image" | "video" | "audio" | null>(null);
+  const [mediaMode, setMediaMode] = useState<'url' | 'file'>('file');
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [bgColor, setBgColor] = useState(currentUser === 'Sude' ? '#ffffff' : '#f0f0f0');
   const [textColor, setTextColor] = useState('#000000');
@@ -42,6 +46,7 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
       setTags("");
       setMediaUrl("");
       setMediaType(null);
+      setUploadedFileName(null);
       setBgColor(currentUser === 'Sude' ? '#ffffff' : '#f0f0f0');
       setTextColor('#000000');
       setFontFamily('var(--font-inter)');
@@ -50,6 +55,31 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
   }, [initialData, currentUser, isOpen]);
 
   if (!isOpen) return null;
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIsUploading(true);
+    setUploadedFileName(file.name);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.success) {
+        setMediaUrl(data.url);
+        setMediaType(data.type);
+      } else {
+        alert('Upload failed: ' + data.error);
+        setUploadedFileName(null);
+      }
+    } catch (err) {
+      alert('Upload error: ' + err);
+      setUploadedFileName(null);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,21 +143,68 @@ export default function ComposeModal({ isOpen, onClose, currentUser, onSubmit, i
             </div>
           </div>
           
-          <div className={styles.mediaInput}>
-            <input 
-              type="text" 
-              placeholder="Media URL (optional)" 
-              value={mediaUrl}
-              onChange={(e) => setMediaUrl(e.target.value)}
-              className={styles.input}
-              style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: 'inherit', borderColor: `${textColor}40` }}
-            />
-            <div className={styles.mediaTypeSelect}>
-               <button type="button" onClick={() => setMediaType('image')} className={mediaType === 'image' ? styles.active : ''} style={{color: mediaType === 'image' ? '#fff' : textColor, borderColor: textColor}}><ImageIcon size={18}/></button>
-               <button type="button" onClick={() => setMediaType('video')} className={mediaType === 'video' ? styles.active : ''} style={{color: mediaType === 'video' ? '#fff' : textColor, borderColor: textColor}}><Video size={18}/></button>
-               <button type="button" onClick={() => setMediaType('audio')} className={mediaType === 'audio' ? styles.active : ''} style={{color: mediaType === 'audio' ? '#fff' : textColor, borderColor: textColor}}><Mic size={18}/></button>
-            </div>
+          {/* Media input: toggle between file pick and URL */}
+          <div className={styles.mediaModeToggle}>
+            <button
+              type="button"
+              className={mediaMode === 'file' ? styles.modeActive : styles.modeBtn}
+              onClick={() => setMediaMode('file')}
+              style={{ color: mediaMode === 'file' ? '#fff' : textColor, borderColor: `${textColor}60` }}
+            >
+              <Upload size={15} /> From Device
+            </button>
+            <button
+              type="button"
+              className={mediaMode === 'url' ? styles.modeActive : styles.modeBtn}
+              onClick={() => setMediaMode('url')}
+              style={{ color: mediaMode === 'url' ? '#fff' : textColor, borderColor: `${textColor}60` }}
+            >
+              <Link size={15} /> From URL
+            </button>
           </div>
+
+          {mediaMode === 'file' ? (
+            <div className={styles.filePickerArea}>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,video/*,audio/*"
+                className={styles.hiddenFileInput}
+                onChange={handleFileChange}
+              />
+              <button
+                type="button"
+                className={styles.filePickerBtn}
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                style={{ borderColor: `${textColor}40`, color: textColor }}
+              >
+                {isUploading ? (
+                  <span>Uploading...</span>
+                ) : uploadedFileName ? (
+                  <><ImageIcon size={16} /> {uploadedFileName}</>
+                ) : (
+                  <><Upload size={16} /> Pick an image, video or song</>  
+                )}
+              </button>
+            </div>
+          ) : (
+            <div className={styles.mediaInput}>
+              <input 
+                type="text" 
+                placeholder="Media URL (optional)" 
+                value={mediaUrl}
+                onChange={(e) => setMediaUrl(e.target.value)}
+                className={styles.input}
+                style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: 'inherit', borderColor: `${textColor}40` }}
+              />
+              <div className={styles.mediaTypeSelect}>
+                 <button type="button" onClick={() => setMediaType('image')} className={mediaType === 'image' ? styles.active : ''} style={{color: mediaType === 'image' ? '#fff' : textColor, borderColor: textColor}}><ImageIcon size={18}/></button>
+                 <button type="button" onClick={() => setMediaType('video')} className={mediaType === 'video' ? styles.active : ''} style={{color: mediaType === 'video' ? '#fff' : textColor, borderColor: textColor}}><Video size={18}/></button>
+                 <button type="button" onClick={() => setMediaType('audio')} className={mediaType === 'audio' ? styles.active : ''} style={{color: mediaType === 'audio' ? '#fff' : textColor, borderColor: textColor}}><Mic size={18}/></button>
+              </div>
+            </div>
+          )}
 
           <div className={styles.customizationControls}>
             <div className={styles.controlGroup}>

@@ -10,8 +10,12 @@
     "start": "tsx server.ts"
   },
   "dependencies": {
+    "@types/multer": "^2.0.0",
+    "cloudinary": "^1.41.3",
     "lucide-react": "^0.574.0",
     "mongoose": "^9.2.1",
+    "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^4.0.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3"
   },

@@ -120,6 +120,84 @@
   gap: 0.75rem;
 }
 
+.mediaModeToggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.modeBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  border: 1px solid;
+  background: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.modeBtn:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.modeActive {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 100px;
+  border: 1px solid;
+  background: var(--foreground);
+  color: var(--background) !important;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.filePickerArea {
+  width: 100%;
+}
+
+.hiddenFileInput {
+  display: none;
+}
+
+.filePickerBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1rem;
+  border: 2px dashed;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 500;
+  transition: all 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.filePickerBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.filePickerBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .input {
   flex: 1;
   padding: 0.75rem 1rem;

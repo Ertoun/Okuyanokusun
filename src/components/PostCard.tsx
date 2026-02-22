@@ -109,7 +109,10 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
       <header className={styles.header}>
         <h3 className={styles.author}>{post.author}</h3>
         <div className={styles.headerRight}>
-          <time className={styles.date}>{new Date(post.createdAt).toLocaleDateString()}</time>
+          <time className={styles.dateWrapper}>
+            <span className={styles.date}>{new Date(post.createdAt).toLocaleDateString()}</span>
+            <span className={styles.time}>{new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+          </time>
           {isAuthor && (
             <>
               <button 
@@ -222,7 +225,10 @@ export default function PostCard({ post, currentUser, onRespond, onDelete, onEdi
                   <div className={styles.responseHeader}>
                     <div className={styles.responseHeaderLeft}>
                       <span className={styles.responseAuthor}>{resp.author}</span>
-                      <span className={styles.responseDate}>{new Date(resp.createdAt).toLocaleDateString()}</span>
+                      <span className={styles.responseDate}>
+                        {new Date(resp.createdAt).toLocaleDateString()}
+                        <span className={styles.responseTime}> {new Date(resp.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</span>
+                      </span>
                     </div>
                     <div className={styles.responseHeaderActions}>
                       {currentUser === resp.author && (
