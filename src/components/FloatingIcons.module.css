@@ -1,0 +1,71 @@
+/* ─── Floating icons background layer ─────────────────────────────────────── */
+
+.canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;          /* behind all content */
+  user-select: none;
+}
+
+/* Each icon is a wrapper <span> that starts at a bottom position and drifts
+   diagonally toward the top-right corner. */
+.icon {
+  position: absolute;
+  display: block;
+  /* The animation moves the element diagonally: positive X (right) and negative Y (up).
+     We translate by ~120vw on X and ~-130vh on Y so it always exits the screen. */
+  animation: floatDiagonal linear infinite;
+  will-change: transform;
+}
+
+@keyframes floatDiagonal {
+  0% {
+    transform: translate(0, 0) rotate(var(--rot, 0deg));
+    opacity: inherit;
+  }
+  80% {
+    opacity: inherit;
+  }
+  100% {
+    transform: translate(120vw, -140vh) rotate(var(--rot, 0deg));
+    opacity: 0;
+  }
+}
+
+.img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+/* ─── Light / dark mode SVG switching ─────────────────────────────────────── */
+
+/*
+  "lightImg" = light-coloured SVG path (visible on dark backgrounds)
+  "darkImg"  = dark-coloured SVG path (visible on light backgrounds)
+
+  Light mode  → dark bg is cream  → show dark icons
+  Dark mode   → dark bg is near-black → show light icons
+*/
+
+/* Default (light mode): show dark-coloured icons */
+.lightImg { display: none;  }
+.darkImg  { display: block; }
+
+/* Dark mode: show light-coloured icons */
+[data-theme="dark"] .lightImg { display: block; }
+[data-theme="dark"] .darkImg  { display: none;  }
+
+/* ─── Accessibility: respect reduced motion ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .icon {
+    animation: none;
+    opacity: 0 !important;
+  }
+}

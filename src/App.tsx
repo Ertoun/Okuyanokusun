@@ -5,11 +5,27 @@ import LoginModal from "@/components/LoginModal";
 import MoodPicker from "@/components/MoodPicker";
 import MoodBanner from "@/components/MoodBanner";
 import Clock from "@/components/Clock";
+import FloatingIcons from "@/components/FloatingIcons";
 import styles from "./App.module.css";
-import { LogIn, LogOut, Feather } from "lucide-react";
+import { LogIn, LogOut, Feather, Sun, Moon } from "lucide-react";
 import { UserType } from "@/types/post";
 
 export default function App() {
+  // ── Theme ─────────────────────────────────────────────────────────────────
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const stored = localStorage.getItem('theme') as 'light' | 'dark' | null;
+    if (stored) return stored;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(t => t === 'light' ? 'dark' : 'light');
+
+  // ── Posts & moods ─────────────────────────────────────────────────────────
   const [posts, setPosts] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -153,13 +169,15 @@ export default function App() {
   }
 
   return (
-    <main className={styles.main}>
+    <>
+      <FloatingIcons />
+      <main className={styles.main}>
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           
           <h1 className={styles.title} onClick={() => window.location.href = '/'}>
             <img 
-            src="/uploads/logo.jpg" 
+            src={theme === 'dark' ? "/uploads/logo-light.png" : "/uploads/logo.jpg"} 
             alt="Okuyan okusun logo" 
             className={styles.logo}
             onClick={() => window.location.href = '/'}
@@ -169,6 +187,14 @@ export default function App() {
         </div>
         <Clock />
         <div className={styles.controls}>
+          <button
+            onClick={toggleTheme}
+            className={styles.themeBtn}
+            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            aria-label="Toggle theme"
+          >
+            {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
           {currentUser ? (
             <>
               <span className={styles.welcome}>Hi, {currentUser}</span>
@@ -229,6 +255,7 @@ export default function App() {
         onClose={() => setIsLoginModalOpen(false)}
         onLogin={(user) => setCurrentUser(user)}
       />
-    </main>
+      </main>
+    </>
   );
 }

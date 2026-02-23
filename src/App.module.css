@@ -3,6 +3,8 @@
   padding: 2rem 1rem;
   max-width: 940px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 .header {
@@ -52,6 +54,26 @@
   align-items: center;
 }
 
+.themeBtn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  padding: 0.6rem;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.themeBtn:hover {
+  background: var(--border);
+  transform: rotate(20deg) scale(1.1);
+}
+
+
 .composeBtn {
   display: flex;
   align-items: center;
@@ -75,7 +97,7 @@
 .moodBtn {
   font-size: 1.4rem;
   line-height: 1;
-  background: rgba(255, 255, 255, 0.5);
+  background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 100px;
   width: 2.4rem;
@@ -90,7 +112,7 @@
 
 .moodBtn:hover {
   transform: scale(1.15);
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--border);
 }
 
 
@@ -98,7 +120,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: white;
+  background: var(--card-bg);
   border: 1px solid var(--border);
   color: var(--foreground);
   padding: 0.6rem 1.5rem;
@@ -118,9 +140,10 @@
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--foreground);
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--card-bg);
   padding: 0.4rem 1rem;
   border-radius: 100px;
+  border: 1px solid var(--border);
 }
 
 .logoutBtn {
